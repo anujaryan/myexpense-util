@@ -1,0 +1,120 @@
+Hello Friends this my first article on java 8
+Today i am going to sharing how lambda expression and method reference reduce boilerplate code and make our code more readable and compact.
+
+Suppose we have student class having two  fields called name and age.
+and we are going to sort student list with help of Comparator,After that we reduce the code step by steps with help java8 new features.
+
+This is our student class having two fields thier setter and getter method and override toString method of object.
+
+class Student {
+	private String name;
+	private Integer age;
+
+	Student(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
+	@Override
+	public String toString() {
+		return "Student [name=" + name + ", age=" + age + "]";
+	}
+
+}
+
+
+suppose we have studentlist that we going to sort.
+we know that List provide sort method and signature are like that.
+
+void sort(Comparator<? super E> c)
+
+It expects a Comparator object as argument to compare two Student!
+
+Step 1	: Create Custom StudentComparator pass that into sort method.
+ solution looks like this:
+public class StudentComparator implements Comparator<Student> {
+public int compare(Student s1, Student s2){
+return s1.getAge().compareTo(s2.getAge());
+}
+
+}
+
+
+studentlist.sort(new StudentComparator());
+
+
+Step 2:Use an anonymous class:
+Rather than implementing Comparator for the purpose of instantiating it once, we
+could use an anonymous class to improve our solution:
+solution looks like this:
+
+studentlist.sort(new Comparator<Student>(){
+public int compare(Student s1, Student s2){
+return s1.getAge().compareTo(s2.getAge());
+}
+});
+
+
+Step 3: Use lambda expressions
+But our current solution is still verbose. Java 8 introduces lambda expressions, which provide a
+lightweight syntax to achieve the same goal:
+
+We know that lambda expression can be used where  a functional interface is expected:
+a functional interface is an interface defining only one abstract method. 	
+
+The signature of the abstract method (called
+function descriptor) can describe the signature of a lambda expression. In our case, the
+Comparator represents a function descriptor (T, T) -> int.
+
+Because we’re using Student, it
+represents more specifically (Student, Student) -> int. our improved solution looks therefore
+as follows:
+
+studentlist.sort((Student std1, Student std2) -> std1.getAge().compareTo(std2.getAge()));
+
+
+We can write our solution like this:
+
+studentlist.sort((std1, std2) -> std1.getAge().compareTo(std2.getAge()));
+
+Java compiler could infer the types of the parameters of a lambda expression by using the context in which the lambda appears. so, we can avoid use of types of parameters
+
+
+Can we make our code even more readable?  yes Comparator has a static helper method called
+comparing that takes a Function extracting a Comparable key and produces a Comparator
+object.
+
+we can now rewrite our solution in a slightly more compact form:
+import static java.util.Comparator.comparing;
+studentlist.sort(comparing((std) -> std.getAge()));
+
+
+Step 4: Use method references
+
+We can use a method reference to make our code slightly less verbose:
+
+static import of java.util.Comparator.comparing):
+
+studentlist.sort(comparing(Student::getAge));
+
+Congratulations, this is our final solution!
+it’s shorter; it’s also obvious what it means,“sort Student comparing the age of the Student.” this how java 8 make code more readable and compact.
+
+if you have any doubts feel free to ask me. Have a nice day.
+
